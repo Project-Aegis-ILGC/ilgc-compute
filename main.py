@@ -5,7 +5,6 @@ import time
 from fastapi import FastAPI
 from apscheduler.schedulers.background import BackgroundScheduler
 
-
 # load .env files
 load_dotenv()
 
