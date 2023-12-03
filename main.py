@@ -21,10 +21,10 @@ app = FastAPI()
 def process_data():
     print("Yo")
 
-# schedule process_data to run every 60 seconds
-scheduler = BackgroundScheduler()
-scheduler.add_job(process_data, 'interval', seconds=60)
-scheduler.start()
+# # schedule process_data to run every 60 seconds
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(process_data, 'interval', seconds=60)
+# scheduler.start()
 
 # get excel sheet
 @app.get("/excel")
