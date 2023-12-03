@@ -1,0 +1,4 @@
+fastpi
+apscheduler
+dotenv
+supabase
