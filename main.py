@@ -2,10 +2,8 @@ from supabase import create_client, Client
 import os
 from dotenv import load_dotenv
 import time
-from fastapi import FastAPI
-from apscheduler.schedulers.background import BackgroundScheduler
 import pandas as pd
-import helpers
+from helpers import *
 # load .env files
 load_dotenv()
 
@@ -15,8 +13,6 @@ key = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 # fastapi app
-app = FastAPI()
-
 
 # # schedule process_data to run every 60 seconds
 # scheduler = BackgroundScheduler()
@@ -34,9 +30,15 @@ app = FastAPI()
 # def show_nothing():
 #     return "I am showing nothing"
 
-@app.get("/verify")
-def verify_patrols():
-    uncompleted_duties = supabase.table('tasks').select("*, personnel_list(guard_phone)").neq('task_type', 'Patrol').is_('timecompletion', "null").execute().data
+def verify():
+    uncompleted_patrols = supabase.table('tasks').select("*, personnel_list(guard_phone)").eq('task_type', 'Patrol').eq('completed', False).execute().data
     wifi_conn = supabase.table('wifi_connections').select("*").execute().data
-    response = helpers.verify_duties(uncompleted_duties, wifi_conn)
-    return wifi_conn
+    locations = supabase.table('locations').select("*").execute().data
+    uncompleted_monitors = supabase.table('tasks').select("*, personnel_list(guard_phone)").eq('task_type', 'Monitor ').eq('completed', False).execute().data
+    verify_patrols(uncompleted_patrols, wifi_conn, locations, supabase)
+    verify_monitors(uncompleted_monitors, wifi_conn, locations, supabase)
+
+
+while True:
+    verify()
+    time.sleep(15)
