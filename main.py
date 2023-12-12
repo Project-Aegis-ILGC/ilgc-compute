@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import time
 import pandas as pd
 from helpers import *
+from commonHelpers import *
 # load .env files
 load_dotenv()
 
@@ -35,10 +36,15 @@ def verify():
     wifi_conn = supabase.table('wifi_connections').select("*").execute().data
     locations = supabase.table('locations').select("*").execute().data
     uncompleted_monitors = supabase.table('tasks').select("*, personnel_list(guard_phone)").eq('task_type', 'Monitor ').eq('completed', False).execute().data
-    verify_patrols(uncompleted_patrols, wifi_conn, locations, supabase)
-    verify_monitors(uncompleted_monitors, wifi_conn, locations, supabase)
+    loc = get_location_df(locations)
+    if len(uncompleted_monitors) != 0:
+        verify_monitors(uncompleted_monitors, wifi_conn, loc, supabase)
+    if len(uncompleted_patrols) != 0:
+        verify_patrols(uncompleted_patrols, wifi_conn, loc, supabase)
+    
 
 
 while True:
     verify()
-    time.sleep(15)
+    print("Verfiying...")
+    time.sleep(1)

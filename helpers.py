@@ -6,10 +6,9 @@ from commonHelpers import *
 
 threshold = 0.01
 
-def verify_patrols(patrols_data, wifi_data, locations, supabase_client):
-    global locations_df
+def verify_patrols(patrols_data, wifi_data, locations_df, supabase_client):
     task_df = get_task_df(patrols_data)
-    locations_df = get_location_df(locations)
+    
     total_locations = locations_df.shape[0]
     wifi_df = get_wifi_df(wifi_data)
     for _, row in task_df.iterrows():
@@ -25,7 +24,7 @@ def verify_patrols(patrols_data, wifi_data, locations, supabase_client):
         else:
             print("Patrol Not Verified!", guard_phone, shift, row["task_date"])
 
-def verify_monitors(monitors_data, wifi_data, locations, supabase_client):
+def verify_monitors(monitors_data, wifi_data, locations_df, supabase_client):
     task_df = get_task_df(monitors_data)
     total_locations = locations_df.shape[0]
     wifi_df = get_wifi_df(wifi_data)
